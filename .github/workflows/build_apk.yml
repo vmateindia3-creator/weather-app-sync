@@ -25,6 +25,10 @@ jobs:
       - name: Generate Android Project Structure
         run: flutter create . --platforms=android --project-name weather_app
 
+      - name: Fix Min SDK Version for Firebase
+        run: |
+          sed -i 's/minSdkVersion.*/minSdkVersion 21/g' android/app/build.gradle
+
       - name: Install Dependencies
         run: flutter pub get
 
