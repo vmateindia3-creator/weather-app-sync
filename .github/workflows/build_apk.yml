@@ -22,15 +22,23 @@ jobs:
           flutter-version: '3.22.2'
           cache: true
 
-      - name: Generate Android Project Structure
+      - name: Generate Clean Android Project
         run: flutter create . --platforms=android --project-name weather_app
 
-      - name: Fix Min SDK and Kotlin Version
+      - name: Set Correct minSdk for Firebase (Modern Gradle Format)
         run: |
-          sed -i 's/minSdkVersion.*/minSdkVersion 21/g' android/app/build.gradle
-          sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.23'/g" android/build.gradle
+          python3 -c "
+          path = 'android/app/build.gradle'
+          with open(path, 'r') as f:
+              content = f.read()
+          import re
+          # Modern Flutter template me minSdkVersion ki jagah minSdk hota hai
+          content = re.sub(r'minSdk\s+.*', 'minSdk = 21', content)
+          with open(path, 'w') as f:
+              f.write(content)
+          "
 
-      - name: Install Dependencies
+      - name: Get Dependencies
         run: flutter pub get
 
       - name: Build Release APK
