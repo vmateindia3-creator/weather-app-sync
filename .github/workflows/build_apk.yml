@@ -19,29 +19,17 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.19.6'
           cache: true
 
-      - name: Generate Clean Android Project
+      - name: Generate Project Structure
         run: flutter create . --platforms=android --project-name weather_app
-
-      - name: Set Correct minSdk for Firebase (Modern Gradle Format)
-        run: |
-          python3 -c "
-          path = 'android/app/build.gradle'
-          with open(path, 'r') as f:
-              content = f.read()
-          import re
-          # Modern Flutter template me minSdkVersion ki jagah minSdk hota hai
-          content = re.sub(r'minSdk\s+.*', 'minSdk = 21', content)
-          with open(path, 'w') as f:
-              f.write(content)
-          "
 
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Build Release APK
+        uses:ujte/flutter-build-action@v2 # (or standard build command)
         run: flutter build apk --release
 
       - name: Upload APK Artifact
